@@ -1,22 +1,31 @@
-import { lineY, plot } from '@observablehq/plot';
+import { lineY, plot, ruleY } from '@observablehq/plot';
 import { dataset } from './data'
 import './style.css'
 
 const xTrain = dataset.map((row) => row[0]);
 const yTrain = dataset.map((row) => row[2]);
 
-const chartData = xTrain.map((x, i) => {
-  return {
-    x: x,
-    y: yTrain[i]
-  }
-}).sort((a, b) => a.x - b.x);
+// MinMax Scaling
+const normalizeInput = (input: number[]): number[] => {
+  const maxX = Math.max(...input);
+  const minX = Math.min(...input);
+
+  const output = input.map(x => (x - minX) / (maxX - minX));
+  return output;
+
+}
+
+const denormalizeInput = (xNorm: number, input: number[]): number => {
+  const maxX = Math.max(...input);
+  const minX = Math.min(...input);
+  return xNorm * (maxX - minX) + minX;
+}
 
 const computeCost = (x: number[], y: number[], w: number, b: number): number => {
   const m = x.length;
   let cost = 0;
 
-  for (let i = 0; i < m; i++) { 
+  for (let i = 0; i < m; i++) {
     let f_wb = w * x[i] + b;
     cost = cost + ((f_wb - y[i]) ** 2);
   }
@@ -89,8 +98,18 @@ const gradientDescent = (
     J_history: J_history,
     p_history: p_history
   }
-
 }
+
+const normalizedX = normalizeInput(xTrain);
+const normalizedY = normalizeInput(yTrain);
+
+const chartData = normalizedX.map((x, i) => {
+  return {
+    x: x,
+    y: normalizedY[i]
+  }
+}).sort((a, b) => a.x - b.x);
+
 
 const w_init = 0;
 const b_init = 0;
@@ -98,19 +117,31 @@ const b_init = 0;
 const iterations = 10_000;
 const alpha = 0.01;
 
-const result = gradientDescent(xTrain, yTrain, w_init, b_init, alpha, iterations, computeCost, computeGradient);
+const result = gradientDescent(normalizedX, normalizedX, w_init, b_init, alpha, iterations, computeCost, computeGradient);
 
 console.log(`f"(w,b) found by gradient descent: (${result.w}, ${result.b})`);
 
+const testResult = [
+  { x: 0, y: result.w * 0 + result.b },
+  { x: 0.5, y: result.w * 0.5 + result.b },
+  { x: 1, y: result.w * 1 + result.b }
+]
+
+console.log(testResult);
+
 
 const graph = plot({
+  marginLeft: 50,
   marks: [
-    lineY(chartData, { x: 'x', y: 'y', marginLeft: 20 }),
+    ruleY([0]),
+    lineY(chartData, { x: 'x', y: 'y', stroke: 'blue' }),
+    lineY(testResult, { x: 'x', y: 'y', stroke: 'red' })
   ]
 });
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-  ${graph.outerHTML}
+    <p>w: ${result.w} b: ${result.b}</p>
+    ${graph.outerHTML}
   </div>
 `
