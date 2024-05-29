@@ -110,7 +110,6 @@ const chartData = normalizedX.map((x, i) => {
   }
 }).sort((a, b) => a.x - b.x);
 
-
 const w_init = 0;
 const b_init = 0;
 
@@ -139,9 +138,23 @@ const graph = plot({
   ]
 });
 
+const rawChartData = xTrain.map((x, i) => {
+  return {
+    x: x,
+    y: yTrain[i] / 1_000
+  }
+}).sort((a, b) => a.x - b.x);
+const rawGraph = plot({
+  marks: [
+    ruleY([0]),
+    lineY(rawChartData, { x: 'x', y: 'y' }),
+  ]
+})
+
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <p>w: ${result.w} b: ${result.b}</p>
     ${graph.outerHTML}
+    ${rawGraph.outerHTML}
   </div>
 `
