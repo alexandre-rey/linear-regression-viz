@@ -3,12 +3,12 @@ import { dataset } from './data'
 import './style.css'
 
 const xTrain = dataset.map((row) => row[0]);
-const yTrain = dataset.map((row) => row[2] / 1000);
+const yTrain = dataset.map((row) => row[2]);
 
 const chartData = xTrain.map((x, i) => {
   return {
     x: x,
-    y: yTrain[i] * 1000
+    y: yTrain[i]
   }
 }).sort((a, b) => a.x - b.x);
 
@@ -17,10 +17,7 @@ const computeCost = (x: number[], y: number[], w: number, b: number): number => 
   let cost = 0;
 
   for (let i = 0; i < m; i++) { 
-    
-    
-    let f_wb = w * x[i] + b; 
-    console.log('f_wb', f_wb);
+    let f_wb = w * x[i] + b;
     cost = cost + ((f_wb - y[i]) ** 2);
   }
 

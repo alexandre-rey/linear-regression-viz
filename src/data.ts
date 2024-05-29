@@ -1,4 +1,4 @@
-export const dataset = [
+/*export const dataset = [
     [2104, 3, 399900],
     [1600, 3, 329900],
     [2400, 3, 369000],
@@ -46,4 +46,9 @@ export const dataset = [
     [852, 2, 179900],
     [1852, 4, 299900],
     [1203, 3, 239500],
-];
+];*/
+
+export const dataset = [
+    [1, 0, 300],
+    [2, 0, 500]
+]
