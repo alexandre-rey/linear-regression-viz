@@ -1,4 +1,4 @@
-import { crosshair, dot, lineY, plot, pointer, ruleY } from '@observablehq/plot';
+import { lineY, plot, ruleY } from '@observablehq/plot';
 import { dataset } from './data'
 import './style.css'
 import { computeCost, computeGradient, gradientDescent } from './linear.regression';
@@ -14,7 +14,7 @@ const normalizedY = yTrain.map((val) => normalizeInput(val, yTrain));
 const w_init = 0;
 const b_init = 0;
 
-const iterations = 10_000;
+const iterations = 100_000;
 const alpha = 0.01;
 
 const result = gradientDescent(normalizedX, normalizedX, w_init, b_init, alpha, iterations, computeCost, computeGradient);
@@ -62,7 +62,8 @@ const rawChartData = xTrain.map((x, i) => {
   }
 }).sort((a, b) => a.x - b.x);
 
-const resultData = [852, 1250, 4000, 4478].map(val => {
+//testing on the training data to see how well the model fits, this is not a good practice, I know
+const resultData = xTrain.map(val => {
   return {
     x: val,
     y: predictValue(val) / 1_000
@@ -85,41 +86,37 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       ${normalizedGraph.outerHTML}
       ${rawGraph.outerHTML}
     </div>
-    <div class="tables">
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Input</th>
-            <th>Predicted Output</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${resultData.map((row) => `
-            <tr>
-              <td>${row.x}</td>
-              <td>${(Math.round(row.y) * 1_000)}</td>
-            </tr>
-          `).join('')}
-      </table>
-    </div>
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Input</th>
-            <th>Output</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${xTrain.map((val, i) => `
-            <tr>
-              <td>${val}</td>
-              <td>${yTrain[i]}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-       </table>
+    <div class="results">
+      <div class="tables">
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Input</th>
+                <th>Output</th>
+                <th>Predicted Output</th>
+                <th>Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${xTrain.map((val, i) => `
+                <tr>
+                  <td>${val}</td>
+                  <td>${yTrain[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</td>
+                  <td>${Math.round(predictValue(val)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</td>
+                  <td>${Math.round(predictValue(val) - yTrain[i]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="infos">
+        <h2>Results</h2>
+        <p>Mean Squared Error: ${result.J_history[result.J_history.length - 1]}</p>
+        <p>Iterations: ${result.J_history.length}</p>
+        <p>Learning Rate: ${alpha}</p>
+        <p>Average Difference: ${xTrain.reduce((previousValue, currentValue, i) => { return Math.round(predictValue(currentValue) - yTrain[i]) }) / xTrain.length}</p>
       </div>
     </div>
   </div>

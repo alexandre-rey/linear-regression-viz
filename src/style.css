@@ -13,8 +13,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.graph, .tables {
+.graph, .tables, .results {
   display: flex;
+  margin: 2em;
 }
 
 .tables {
