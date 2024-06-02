@@ -13,8 +13,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.graph {
+.graph, .tables {
   display: flex;
+}
+
+.tables {
+  flex-direction: row;
+  gap: 5em;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 0.5em 1em;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
 }
 
 a {

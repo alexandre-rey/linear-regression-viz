@@ -85,5 +85,42 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       ${normalizedGraph.outerHTML}
       ${rawGraph.outerHTML}
     </div>
+    <div class="tables">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Input</th>
+            <th>Predicted Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${resultData.map((row) => `
+            <tr>
+              <td>${row.x}</td>
+              <td>${(Math.round(row.y) * 1_000)}</td>
+            </tr>
+          `).join('')}
+      </table>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Input</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${xTrain.map((val, i) => `
+            <tr>
+              <td>${val}</td>
+              <td>${yTrain[i]}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+       </table>
+      </div>
+    </div>
   </div>
 `
